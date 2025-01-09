@@ -9,10 +9,17 @@ import android.widget.Toast
 import com.example.mobileapplication32.MainFragment
 import com.example.mobileapplication32.R
 import com.example.mobileapplication32.databinding.FragmentSignUpBinding
+import com.example.mobileapplication32.models.User
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.database.FirebaseDatabase
 
 class SignUpFragment : Fragment() {
 
     private lateinit var binding: FragmentSignUpBinding
+
+    private val auth = Firebase.auth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,10 +45,19 @@ class SignUpFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            //firebase auth TODO()
+            auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener { task ->
+                if (task.isSuccessful){
 
-            loadFragment(MainFragment.newInstance())
+                    val id = FirebaseAuth.getInstance().currentUser!!.uid
+                    val user = User(id, "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg", "")
 
+                    FirebaseDatabase.getInstance().getReference("USER").child(id).setValue(user)
+                    loadFragment(MainFragment.newInstance())
+                    Toast.makeText(requireContext(), "signed up", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), task.exception!!.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         tvSignInSignUp.setOnClickListener {

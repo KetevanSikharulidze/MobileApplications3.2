@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".home.homeFragments.HomeMainFragment">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcViewStories"
-
-        tools:listitem="@layout/item_story"
-        tools:itemCount="1"
-
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcViewPosts"
-        tools:listitem="@layout/item_post"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcViewStories"
 
-</LinearLayout>
+            tools:listitem="@layout/item_story"
+            tools:itemCount="1"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcViewPosts"
+            tools:listitem="@layout/item_post"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

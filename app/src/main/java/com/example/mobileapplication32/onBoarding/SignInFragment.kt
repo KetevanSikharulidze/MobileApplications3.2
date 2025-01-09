@@ -9,10 +9,13 @@ import android.widget.Toast
 import com.example.mobileapplication32.MainFragment
 import com.example.mobileapplication32.R
 import com.example.mobileapplication32.databinding.FragmentSignInBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class SignInFragment : Fragment() {
 
     private lateinit var binding : FragmentSignInBinding
+
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,10 +44,13 @@ class SignInFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            //firebase auth TODO()
-
-            loadFragment(MainFragment.newInstance())
-
+            auth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
+                if (it.isSuccessful){
+                    loadFragment(MainFragment.newInstance())
+                } else {
+                    Toast.makeText(requireContext(), it.exception!!.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         tvSignUpSignIn.setOnClickListener {

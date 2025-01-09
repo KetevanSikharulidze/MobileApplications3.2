@@ -7,17 +7,27 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.mobileapplication32.R
 import com.example.mobileapplication32.adapters.RvStoryAdapter
 import com.example.mobileapplication32.adapters.VpAdapter
 import com.example.mobileapplication32.databinding.FragmentHomeBinding
 import com.example.mobileapplication32.databinding.FragmentProfileBinding
 import com.example.mobileapplication32.models.Story
+import com.example.mobileapplication32.models.User
+import com.example.mobileapplication32.onBoarding.SignInFragment
 import com.example.mobileapplication32.profile.postsFragments.PostsFragment
 import com.example.mobileapplication32.profile.postsFragments.TaggedFragment
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class ProfileFragment : Fragment() {
 
@@ -34,6 +44,9 @@ class ProfileFragment : Fragment() {
         "POSTS", "TAGGED"
     )
 
+    private val db = FirebaseDatabase.getInstance().getReference("USER")
+    private val auth = Firebase.auth
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,8 +57,32 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        init()
         initVP()
         rvInit()
+    }
+
+    private fun init() = with(binding){
+        btnSignOut.setOnClickListener{
+            auth.signOut()
+            parentFragmentManager.beginTransaction().replace(R.id.placeHolder, SignInFragment.newInstance()).commit()
+        }
+
+        db.child(auth.currentUser!!.uid).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val userInfo = snapshot.getValue(User::class.java) ?: return
+                tvMainUserUserName.text = userInfo.userID
+                Glide.with(requireContext()).load(userInfo.profileAvatar).into(ivMainUserAvatar)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireContext(), error.message, Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
+
+
     }
 
     private fun rvInit() = with(binding) {
